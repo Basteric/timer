@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #taskInput {
+            margin-bottom: 10px;
+        }
+        #tasks {
+            margin-top: 20px;
+        }
+        .task {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .overdue {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Time Tracker</h1>
+    <div id="taskInput">
+        <input type="text" id="taskName" placeholder="Task Name">
+        <input type="number" id="taskLimit" placeholder="Limit (minutes)">
+        <button onclick="addTask()">Add Task</button>
+        <button onclick="testSound()">Test Sound</button> <!-- Bouton pour tester le son -->
+    </div>
+    <div id="tasks"></div>
+
+    <audio id="alertSound" src="alert.mp3" loop></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
