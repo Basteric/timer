@@ -1,0 +1,62 @@
+
+
+    #taskInput {
+        margin-bottom: 10px;
+    }
+
+    #tasks {
+        margin-top: 20px;
+    }
+
+    .task {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .overdue {
+        color:   #eb2345;
+    }
+    #toggle-0 {
+        background-color:    #2188E2;
+
+        color: white;
+    }
+
+    .button-active {
+        background-color: #2188E2;
+        /* Green */
+        color: white;
+        
+    }
+
+    .button-paused {
+        background-color: #2188E2;
+        /* Amber */
+        color: white;
+    }
+
+    .button-stopped {
+        background-color: #ffffff !important;
+        /* Red */
+        color: #1c1d1f !important;
+    }
+
+    .finished {
+        background-color: #2188E2;
+        /* Green */
+        color: white;
+    }
+
+    .delete-button {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background-color: #eb2345;
+        /* Red */
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
