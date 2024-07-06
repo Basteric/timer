@@ -50,7 +50,7 @@
             border: 1px solid #17171815;
         }
 
-        input {
+        input, select {
             font-family: "Inter", sans-serif;
             margin-top: 12px;
             padding: 12px;
@@ -58,6 +58,7 @@
             outline: none;
             border: solid 2px #2188e241;
             background-color: #ffffff;
+            font-weight: 600;
         }
 
         button {
@@ -117,8 +118,20 @@
     <div class="all">
         <h1>Time Tracker</h1>
         <div id="taskInput">
-            <input type="text" id="taskName" placeholder="Nom de la tâche">
-            <input type="number" id="taskLimit" placeholder="Limite en minutes">
+            <input type="text" id="taskName" placeholder="Nom de la Tâche">
+            <select id="taskLimit">
+                <option value="15">15 minutes</option>
+                <option value="30">30 minutes</option>
+                <option value="45">45 minutes</option>
+                <option value="60">1 heure</option>
+                <option value="90">1 heure 30 minutes</option>
+                <option value="120">2 heures</option>
+                <option value="150">2 heures 30 minutes</option>
+                <option value="180">3 heures</option>
+                <option value="210">3 heures 30 minutes</option>
+                <option value="240">4 heures</option>
+            </select>
+    
             <button id="caca" onclick="addTask()">Ajouter une tâche</button>
         </div>
         <div id="tasks"></div>

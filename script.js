@@ -13,16 +13,16 @@ function requestNotificationPermission() {
 
 function showNotification(taskName) {
     if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Time Tracker', {
-            body: `La tâche ${taskName} a dépassé la limite de temps !`,
-            icon: 'icon.png' // Add an appropriate icon if available
+        new Notification('Suivi du Temps', {
+            body: `La tâche "${taskName}" a dépassé sa limite de temps!`,
+            icon: 'icon.png' // Ajoutez une icône appropriée si disponible
         });
     }
 }
 
 function addTask() {
     const taskName = document.getElementById('taskName').value;
-    const taskLimit = parseInt(document.getElementById('taskLimit').value, 10) * 60000; // Convert minutes to milliseconds
+    const taskLimit = parseInt(document.getElementById('taskLimit').value, 10) * 60000; // Convertir les minutes en millisecondes
     if (taskName.trim() === '' || isNaN(taskLimit)) return;
 
     const task = {
@@ -34,13 +34,13 @@ function addTask() {
         running: false,
         interval: null,
         alerted: false,
-        state: 'stopped', // Added to track state
-        finished: false  // Added to track finished state
+        state: 'stopped', // Ajouté pour suivre l'état
+        finished: false  // Ajouté pour suivre l'état de fin
     };
 
     tasks.push(task);
     document.getElementById('taskName').value = '';
-    document.getElementById('taskLimit').value = '';
+    document.getElementById('taskLimit').value = '15'; // Réinitialiser à la valeur par défaut
     saveTasks();
     renderTasks();
 }
@@ -58,18 +58,19 @@ function startTimer(index) {
 
     tasks[index].startTime = Date.now() - tasks[index].duration;
     tasks[index].running = true;
+    tasks[index].finished = false; // Réinitialiser finished lors de la reprise
     tasks[index].interval = setInterval(() => {
         tasks[index].duration = Date.now() - tasks[index].startTime;
         if (tasks[index].duration > tasks[index].limit && !tasks[index].alerted) {
-            console.log(`Task "${tasks[index].name}" has exceeded its time limit!`);
-            tasks[index].alerted = true;  // Set alerted to true immediately to avoid multiple triggers
-            playSoundAndNotify(tasks[index]); // Play sound and show notification for the exceeded task
+            console.log(`La tâche "${tasks[index].name}" a dépassé sa limite de temps!`);
+            tasks[index].alerted = true;  // Définir alerté à vrai immédiatement pour éviter les déclenchements multiples
+            playSoundAndNotify(tasks[index]); // Jouer le son et afficher la notification pour la tâche dépassée
         }
         saveTasks();
         renderTasks();
     }, 1000);
 
-    tasks[index].state = 'running'; // Update state
+    tasks[index].state = 'running'; // Mettre à jour l'état
     updateButtonStyles(index);
 }
 
@@ -82,7 +83,7 @@ function pauseTimer(index) {
     saveTasks();
     renderTasks();
 
-    tasks[index].state = 'paused'; // Update state
+    tasks[index].state = 'paused'; // Mettre à jour l'état
     updateButtonStyles(index);
 }
 
@@ -90,14 +91,14 @@ function finishTask(index) {
     clearInterval(tasks[index].interval);
     tasks[index].running = false;
     tasks[index].finished = true;
-    tasks[index].state = 'finished'; // Update state
+    tasks[index].state = 'finished'; // Mettre à jour l'état
     saveTasks();
     renderTasks();
 }
 
 function stopSound() {
     alertSound.pause();
-    alertSound.currentTime = 0; // Reset the sound to the beginning
+    alertSound.currentTime = 0; // Réinitialiser le son au début
 }
 
 function deleteTask(index) {
@@ -140,28 +141,28 @@ function renderTasks() {
             exceededTime = `Dépassé de : ${exceededHours}h ${exceededMinutes}m ${exceededSeconds}s`;
         }
 
-        const buttonLabel = task.running ? 'Pause' : 'Commencer';
+        const buttonLabel = task.finished ? 'Reprendre' : (task.running ? 'Pause' : 'Démarrer');
 
         taskElement.innerHTML = `
             <button class="delete-button" onclick="deleteTask(${index})">Supprimer</button>
             <h3>${task.name}</h3>
-            <p class="${durationClass}"> <b>Durée :</b> ${hours}h ${minutes}m ${seconds}s</p>
-            <p><b>Limite</b> : ${limitMinutes} minutes</p>
+            <p class="${durationClass}">Durée : ${hours}h ${minutes}m ${seconds}s</p>
+            <p>Limite : ${limitMinutes} minutes</p>
             <p>${exceededTime}</p>
             <button id="toggle-${index}" onclick="toggleTimer(${index})">${buttonLabel}</button>
-            <button onclick="finishTask(${index})">Terminer</button>
+            ${!task.finished ? `<button onclick="finishTask(${index})">Terminer</button>` : ''}
         `;
 
         tasksContainer.appendChild(taskElement);
 
-        // Update button styles based on state
+        // Mettre à jour les styles des boutons en fonction de l'état
         updateButtonStyles(index);
 
-        // Check if task already exceeded its limit and alert
+        // Vérifier si la tâche a déjà dépassé sa limite et alerter
         if (task.duration > task.limit && !task.alerted) {
-            console.log(`Task "${task.name}" has already exceeded its time limit!`);
-            playSoundAndNotify(task); // Play sound and show notification for the already exceeded task
-            task.alerted = true;  // Set alerted to true after sound starts playing
+            console.log(`La tâche "${task.name}" a déjà dépassé sa limite de temps!`);
+            playSoundAndNotify(task); // Jouer le son et afficher la notification pour la tâche déjà dépassée
+            task.alerted = true;  // Définir alerté à vrai après que le son commence à jouer
         }
     });
 }
@@ -178,7 +179,6 @@ function updateButtonStyles(index) {
             toggleButton.classList.add('button-paused');
         } else if (tasks[index].state === 'finished') {
             toggleButton.classList.add('button-stopped');
-            toggleButton.disabled = true;
         }
     }
 }
@@ -192,10 +192,10 @@ function playSoundAndNotify(task) {
     const exceededSeconds = Math.floor((exceededTime % 60000) / 1000);
     setTimeout(() => {
         if (!document.hidden) {
-            alert(`La tâche à dépassé le temps de ${exceededHours}h ${exceededMinutes}m ${exceededSeconds}s !`);
+            alert(`La tâche a dépassé sa limite de temps de ${exceededHours}h ${exceededMinutes}m ${exceededSeconds}s ! Cliquez sur OK pour arrêter le son d'alerte.`);
             stopSound();
         }
-    }, 1000);  // Delay alert slightly to ensure notification and sound happen first
+    }, 1000);  // Retarder légèrement l'alerte pour s'assurer que la notification et le son se produisent d'abord
 }
 
 // Event listener to handle visibility change
@@ -208,7 +208,7 @@ document.addEventListener('visibilitychange', () => {
                 const exceededHours = Math.floor(exceededTime / 3600000);
                 const exceededMinutes = Math.floor((exceededTime % 3600000) / 60000);
                 const exceededSeconds = Math.floor((exceededTime % 60000) / 1000);
-                alert(`La tâche "${task.name}" a dépassé le temps de ${exceededHours}h ${exceededMinutes}m ${exceededSeconds}s !`);
+                alert(`La tâche "${task.name}" a dépassé sa limite de temps de ${exceededHours}h ${exceededMinutes}m ${exceededSeconds}s ! Cliquez sur OK pour arrêter le son d'alerte.`);
             }
         });
     }
