@@ -61,7 +61,7 @@ function startTimer(index) {
         if (tasks[index].duration > tasks[index].limit && !tasks[index].alerted) {
             console.log(`Task "${tasks[index].name}" has exceeded its time limit!`);
             tasks[index].alerted = true;  // Set alerted to true immediately to avoid multiple triggers
-            playSoundAndNotify(index); // Play sound and show notification for the exceeded task
+            playSoundAndNotify(tasks[index].name); // Play sound and show notification for the exceeded task
         }
         saveTasks();
         renderTasks();
@@ -136,18 +136,20 @@ function renderTasks() {
         // Check if task already exceeded its limit and alert
         if (task.duration > task.limit && !task.alerted) {
             console.log(`Task "${task.name}" has already exceeded its time limit!`);
-            playSoundAndNotify(index); // Play sound and show notification for the already exceeded task
+            playSoundAndNotify(task.name); // Play sound and show notification for the already exceeded task
             task.alerted = true;  // Set alerted to true after sound starts playing
         }
     });
 }
 
-function playSoundAndNotify(index) {
+function playSoundAndNotify(taskName) {
     alertSound.play().then(() => {
-        console.log("Sound is playing for task index: " + index);
-        showNotification(tasks[index].name);
-        alert("Task has exceeded its time limit! Click OK to stop the alert sound.");
-        stopSound();
+        console.log("Sound is playing");
+        showNotification(taskName);
+        setTimeout(() => {
+            alert("Task has exceeded its time limit! Click OK to stop the alert sound.");
+            stopSound();
+        }, 1000);  // Delay alert slightly to ensure notification and sound happen first
     }).catch((error) => {
         console.log("Error playing sound: ", error);
     });
